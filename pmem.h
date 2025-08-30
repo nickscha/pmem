@@ -95,10 +95,10 @@ PMEM_API PMEM_INLINE int pmem_free(pmem *memory_struct)
 #endif /* _WINDOWS_ */
 
 /* #############################################################################
- * # LINUX/MACOS Implementation
+ * # LINUX Implementation
  * #############################################################################
  */
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 
 #ifndef _SYS_MMAN_H
 #define PROT_READ 0x1      /* Page can be read.  */
@@ -146,7 +146,62 @@ PMEM_API PMEM_INLINE int pmem_free(pmem *memory_struct)
   return 0;
 }
 
-#endif /* __linux__ & __APPLE__ */
+#endif /* __linux__ */
+
+/* #############################################################################
+ * # MACOS Implementation
+ * #############################################################################
+ */
+#ifdef __APPLE__
+
+/* Manual declarations for mmap and munmap from sys/mman.h */
+#ifndef _SYS_MMAN_H
+#define PROT_READ 0x1
+#define PROT_WRITE 0x2
+#define MAP_PRIVATE 0x02
+#define MAP_ANON 0x1000
+#define MAP_FAILED ((void *)-1)
+
+void *mmap(void *addr, unsigned long len, int prot, int flags, int fd, long off);
+int munmap(void *addr, unsigned long len);
+
+#endif /* _SYS_MMAN_H */
+
+PMEM_API PMEM_INLINE int pmem_allocate(pmem *memory_struct)
+{
+  if (memory_struct == (void *)0 || memory_struct->memory_size == 0)
+  {
+    return 0;
+  }
+
+  memory_struct->memory = mmap(0, memory_struct->memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+
+  if (memory_struct->memory == MAP_FAILED)
+  {
+    memory_struct->memory = (void *)0;
+    return 0;
+  }
+
+  return 1;
+}
+
+PMEM_API PMEM_INLINE int pmem_free(pmem *memory_struct)
+{
+  if (memory_struct == (void *)0 || memory_struct->memory == (void *)0)
+  {
+    return 0;
+  }
+
+  if (munmap(memory_struct->memory, memory_struct->memory_size) == 0)
+  {
+    memory_struct->memory = (void *)0;
+    return 1;
+  }
+
+  return 0;
+}
+
+#endif /* __APPLE__ */
 
 #endif /* PMEM_H */
 
