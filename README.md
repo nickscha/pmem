@@ -15,6 +15,19 @@ Download or clone pmem.h and include it in your project.
 
 int main() {
 
+    pmem block = {0};
+    block.memory_size = 1024;
+
+    if (!pmem_allocate(&block)) {
+        return 1;
+    }
+
+    /* Now you can use block.memory */
+
+    if (!pmem_free(&block)) {
+        return 1;
+    }
+
     return 0;
 }
 ```
