@@ -27,6 +27,8 @@ LICENSE
     *(volatile int *)0 = 0; \
   }
 
+#define TEST_SIZE 257
+
 #ifdef __clang__
 #elif __GNUC__
 __attribute((externally_visible))
@@ -37,7 +39,25 @@ __attribute((force_align_arg_pointer))
 int
 mainCRTStartup(void)
 {
-  assert(1 == 1);
+  char *ptr;
+  unsigned int i;
+
+  pmem block = {0};
+  block.memory_size = TEST_SIZE;
+
+  assert(pmem_allocate(&block));
+  assert(block.memory_size == TEST_SIZE);
+  assert(block.memory != (void *)0);
+
+  ptr = (char *)block.memory;
+
+  /* Verify that the memory is zeroed and accessible */
+  for (i = 0; i < block.memory_size; ++i)
+  {
+    assert(ptr[i] == 0);
+  }
+
+  assert(pmem_free(&block));
 
   return 0;
 }
