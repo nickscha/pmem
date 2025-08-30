@@ -67,6 +67,12 @@ PMEM_API PMEM_INLINE int pmem_allocate(pmem *memory_struct)
     return 0;
   }
 
+  /* Check if already allocated */
+  if (memory_struct->memory != (void *)0)
+  {
+    return 0;
+  }
+
   memory_struct->memory = (void *)VirtualAlloc(0, memory_struct->memory_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
   if (memory_struct->memory == (void *)0)
@@ -115,6 +121,12 @@ int munmap(void *addr, unsigned long len);
 PMEM_API PMEM_INLINE int pmem_allocate(pmem *memory_struct)
 {
   if (memory_struct == (void *)0 || memory_struct->memory_size == 0)
+  {
+    return 0;
+  }
+
+  /* Check if already allocated */
+  if (memory_struct->memory != (void *)0)
   {
     return 0;
   }
@@ -170,6 +182,12 @@ int munmap(void *addr, unsigned long len);
 PMEM_API PMEM_INLINE int pmem_allocate(pmem *memory_struct)
 {
   if (memory_struct == (void *)0 || memory_struct->memory_size == 0)
+  {
+    return 0;
+  }
+
+  /* Check if already allocated */
+  if (memory_struct->memory != (void *)0)
   {
     return 0;
   }

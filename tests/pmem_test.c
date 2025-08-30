@@ -24,6 +24,7 @@ void pmem_test_simple(void)
   block.memory_size = TEST_SIZE;
 
   assert(pmem_allocate(&block));
+  assert(!pmem_allocate(&block)); /* Already allocated */
   assert(block.memory_size == TEST_SIZE);
   assert(block.memory != (void *)0);
 
@@ -35,6 +36,8 @@ void pmem_test_simple(void)
     assert(ptr[i] == 0);
   }
 
+  assert(pmem_free(&block));
+  assert(pmem_allocate(&block));
   assert(pmem_free(&block));
 }
 
