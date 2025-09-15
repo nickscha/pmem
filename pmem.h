@@ -53,7 +53,7 @@ typedef struct pmem
 #define PAGE_READWRITE 0x04
 
 PMEM_WIN32_API(void *)
-VirtualAlloc(void *lpAddress, unsigned long dwSize, unsigned longflAllocationType, unsigned longflProtect);
+VirtualAlloc(void *lpAddress, unsigned long dwSize, unsigned long flAllocationType, unsigned long flProtect);
 
 PMEM_WIN32_API(int)
 VirtualFree(void *lpAddress, unsigned long dwSize, unsigned long dwFreeType);
