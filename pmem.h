@@ -18,17 +18,15 @@ LICENSE
 /* Check if using C99 or later (inline is supported) */
 #if __STDC_VERSION__ >= 199901L
 #define PMEM_INLINE inline
-#define PMEM_API static
 #elif defined(__GNUC__) || defined(__clang__)
 #define PMEM_INLINE __inline__
-#define PMEM_API static
 #elif defined(_MSC_VER)
 #define PMEM_INLINE __inline
-#define PMEM_API static
 #else
 #define PMEM_INLINE
-#define PMEM_API static
 #endif
+
+#define PMEM_API static
 
 typedef struct pmem
 {
